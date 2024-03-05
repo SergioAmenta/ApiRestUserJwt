@@ -24,8 +24,10 @@ namespace WebApiUsuario.Controllers
         }
 
 
-        [HttpPost]
-        public IActionResult Login(LoginUser loginUser){
+        [HttpPost] 
+        public IActionResult Login(LoginUser loginUser)
+        {
+            
             var user = Authentication(loginUser);
             if (user != null){
                 //Token
@@ -35,7 +37,9 @@ namespace WebApiUsuario.Controllers
             return NotFound("Usuario no encontrado");
         }
 
-        public Usuario Authentication(LoginUser loginUser){
+        
+        private Usuario Authentication(LoginUser loginUser)
+        {
             var currentUser = UserConstants.users.FirstOrDefault(x=>x.username.ToLower() == loginUser.username.ToLower()
             && x.password == loginUser.password);
 
@@ -56,7 +60,7 @@ namespace WebApiUsuario.Controllers
                 new Claim(ClaimTypes.NameIdentifier,user.username),
                 new Claim(ClaimTypes.Email,user.email),
                 new Claim(ClaimTypes.Role,user.rol),
-              //  new Claim(ClaimTypes.GiveName,user.name)                
+                //new Claim(ClaimTypes.GiveName,user.name)                
              };
             //crear token
 
