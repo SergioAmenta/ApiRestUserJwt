@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebApiUsuario.Models;
 using WebApiUsuario.constants;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace WebApiUsuario.Controllers
 {
@@ -25,7 +30,7 @@ namespace WebApiUsuario.Controllers
             if (user != null){
                 //Token
                 var token = Generate(user);
-                return Ok("Usuario Logueado");
+                return Ok(token);
             }
             return NotFound("Usuario no encontrado");
         }
@@ -43,14 +48,15 @@ namespace WebApiUsuario.Controllers
 
         private string Generate(Usuario user){
            
-            var securityKey = new SymmetricSecuritykey(Encoding.UTF8.GetBytes(_config["jwt:Key"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetValue<string>("JwtConfig:Key")));
             var credentials = new SigningCredentials(securityKey,SecurityAlgorithms.HmacSha256);
              //crear claims
              var claims = new[]  
-             {           new claim(claimTypes.nameIdentifier,user.username);
-              new claim(claimTypes.email,user.email);
-               new claim(claimTypes.role,user.rol);
-                new claim(claimTypes.givename,user.name);                
+             {           
+                new Claim(ClaimTypes.NameIdentifier,user.username),
+                new Claim(ClaimTypes.Email,user.email),
+                new Claim(ClaimTypes.Role,user.rol),
+              //  new Claim(ClaimTypes.GiveName,user.name)                
              };
             //crear token
 
