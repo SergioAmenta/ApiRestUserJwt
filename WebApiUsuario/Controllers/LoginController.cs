@@ -48,7 +48,7 @@ namespace WebApiUsuario.Controllers
 
         private string Generate(Usuario user){
            
-            var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetValue<string>("JwtConfig:Key")));
+            var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetValue<string>("jwt:Key")));
             var credentials = new SigningCredentials(securityKey,SecurityAlgorithms.HmacSha256);
              //crear claims
              var claims = new[]  
