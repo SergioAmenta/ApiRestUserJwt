@@ -10,6 +10,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApiUsuario.Controllers
 {
@@ -17,7 +18,8 @@ namespace WebApiUsuario.Controllers
     [Route("api/[controller]")]
     public class EmployeeController : ControllerBase
     {
-          [HttpGet]
+        [HttpGet]
+        [Authorize (Roles = ("Administrador"))]
         public IActionResult Get()
         {
             var listEmployees = EmployeeConstants.Employees;

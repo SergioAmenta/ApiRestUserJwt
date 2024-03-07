@@ -22,6 +22,12 @@ namespace WebApiUsuario.Controllers
         public LoginController (IConfiguration config){
             _config = config;
         }
+        
+        [HttpGet] 
+        public IActionResult Get(){
+            var currentUser = GetCurrentUser();
+            return Ok($"Hola Tu eres {currentUser.rol}");
+        }
 
 
         [HttpPost] 
@@ -72,6 +78,24 @@ namespace WebApiUsuario.Controllers
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        //decodificar el token
+        private Usuario GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null){
+                var userClaims = identity.Claims;
+
+                return new Usuario
+                {
+                    username = userClaims.FirstOrDefault(o=>o.Type == ClaimTypes.NameIdentifier)?.Value,                   
+                    rol = userClaims.FirstOrDefault(o=>o.Type == ClaimTypes.Role)?.Value,
+                    email = userClaims.FirstOrDefault(o=>o.Type == ClaimTypes.Email)?.Value,
+
+                };
+            }
+            return null;
         }
     }
 }

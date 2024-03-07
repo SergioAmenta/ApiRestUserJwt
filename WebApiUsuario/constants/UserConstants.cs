@@ -14,8 +14,8 @@ namespace WebApiUsuario.constants
                 email = "jperez@hotmail.com", name = "Juan"
             },
             new Usuario(){
-                username = "ARafael", password = "admin123", rol ="Vendedor",
-                email = "ARafael@hotmail.com", name = "Alejandro"
+                username = "aRafael", password = "admin123", rol ="Vendedor",
+                email = "arafael@hotmail.com", name = "Alejandro"
             }
         };        
     }

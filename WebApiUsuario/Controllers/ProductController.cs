@@ -10,14 +10,16 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApiUsuario.Controllers
 {
-     [ApiController]
+    [ApiController]
     [Route("api/[controller]")]
     public class ProductController  : ControllerBase
     {
         [HttpGet]
+        [Authorize]
         public IActionResult Get()
         {
             var listProducts = ProductConstants.Products;            
