@@ -10,56 +10,27 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using WebApiUsuario.Service.JwtToken;
+using Microsoft.AspNetCore.Http;
 
-namespace WebApiUsuario.Controllers
+namespace WebApiUsuario.Service.JwtToken
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class LoginController : ControllerBase
+    public class JwtTokenService : IJwtTokenService
     {
+
         private readonly IConfiguration _config;
-        private readonly IJwtTokenService _jwtTokenService;
+         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LoginController (IConfiguration config, IJwtTokenService jwtTokenService ){
+
+
+        public JwtTokenService (IConfiguration config, IHttpContextAccessor httpContextAccessor)
+        {
             _config = config;
-            _jwtTokenService = jwtTokenService;
-        }
-        
-        [HttpGet] 
-        public IActionResult Get(){
-            var currentUser = _jwtTokenService.GetCurrentUser();
-            return Ok($"Hola Tu eres {currentUser.rol}");
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
-        [HttpPost] 
-        public IActionResult Login(LoginUser loginUser)
+        public string Generate(Usuario user)
         {
-            
-            var user = Authentication(loginUser);
-            if (user != null){
-                //Token
-                var token = _jwtTokenService.Generate(user);
-                return Ok(token);
-            }
-            return NotFound("Usuario no encontrado");
-        }
-
-        
-        private Usuario Authentication(LoginUser loginUser)
-        {
-            var currentUser = UserConstants.users.FirstOrDefault(x=>x.username.ToLower() == loginUser.username.ToLower()
-            && x.password == loginUser.password);
-
-            if (currentUser != null){
-                    return currentUser;
-            }
-
-            return null;
-        }
-
-       /*private string Generate(Usuario user){
            
             var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetValue<string>("jwt:Key")));
             var credentials = new SigningCredentials(securityKey,SecurityAlgorithms.HmacSha256);
@@ -71,6 +42,7 @@ namespace WebApiUsuario.Controllers
                 new Claim(ClaimTypes.Role,user.rol),
                 //new Claim(ClaimTypes.GiveName,user.name)                
              };
+
             //crear token
 
            var token = new JwtSecurityToken(
@@ -82,11 +54,11 @@ namespace WebApiUsuario.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
+    
         //decodificar el token
-        private Usuario GetCurrentUser()
+        public Usuario GetCurrentUser()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var identity = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             if (identity != null){
                 var userClaims = identity.Claims;
 
@@ -99,6 +71,6 @@ namespace WebApiUsuario.Controllers
                 };
             }
             return null;
-        }*/
+        }
     }
 }
